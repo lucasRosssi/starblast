@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "SBCharacter.generated.h"
 
+class UWidgetComponent;
+
 UCLASS()
 class STARBLAST_API ASBCharacter : public ACharacter
 {
@@ -14,12 +16,15 @@ class STARBLAST_API ASBCharacter : public ACharacter
 public:
 	ASBCharacter();
 
-protected:
-	virtual void BeginPlay() override;
-
-public:	
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+protected:
+	virtual void BeginPlay() override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Widget")
+	TObjectPtr<UWidgetComponent> OverheadWidget;
+
+private:	
 
 };

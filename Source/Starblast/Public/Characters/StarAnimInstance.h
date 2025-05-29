@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
-#include "SBAnimInstance.generated.h"
+#include "StarAnimInstance.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class STARBLAST_API USBAnimInstance : public UAnimInstance
+class STARBLAST_API UStarAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
 	

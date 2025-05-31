@@ -3,12 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Characters/StarCharacter.h"
 #include "Components/ActorComponent.h"
 #include "InteractComponent.generated.h"
 
 
+class UGameplayAbility;
 class UWidgetComponent;
-class USphereComponent;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class STARBLAST_API UInteractComponent : public UActorComponent
@@ -18,15 +19,16 @@ class STARBLAST_API UInteractComponent : public UActorComponent
 public:	
 	UInteractComponent();
 	
-	void SetRootComponent(USceneComponent* RootComponent);
+	void SetCollisionComponent(UPrimitiveComponent* Component);
 	
 	void Enable();
 	void Disable();
+
 protected:
 	virtual void BeginPlay() override;
 	
 	UFUNCTION()
-	void OnSphereOverlap(
+	void OnOverlap(
 		UPrimitiveComponent* OverlappedComponent,
 		AActor* OtherActor,
 		UPrimitiveComponent* OtherComp,
@@ -35,22 +37,28 @@ protected:
 		const FHitResult& SweepResult
 	);
 	UFUNCTION()
-	void OnSphereEndOverlap(
+	void OnEndOverlap(
 		UPrimitiveComponent* OverlappedComponent,
 		AActor* OtherActor,
 		UPrimitiveComponent* OtherComp,
 		int32 OtherBodyIndex
 	);
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interaction")
-	TObjectPtr<USphereComponent> AreaSphere;
+	void OnInteracted(AStarCharacter* Character);
+
+	UPROPERTY(BlueprintReadOnly, Category="Interaction")
+	TObjectPtr<UPrimitiveComponent> CollisionComponent;
 
 	UPROPERTY(EditAnywhere, Category="Interaction")
 	bool bBeginEnabled = true;
+	UPROPERTY(EditAnywhere, Category="Interaction")
+	bool bDisableOnInteracted = true;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interaction")
 	TObjectPtr<UWidgetComponent> InteractWidget;
+
+	UPROPERTY(EditDefaultsOnly, Category="Interaction")
+	TSubclassOf<UGameplayAbility> InteractAbility;
 private:	
 	bool bEnabled = true;
-		
 };

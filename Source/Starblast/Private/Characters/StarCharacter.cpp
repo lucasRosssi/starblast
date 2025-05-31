@@ -3,7 +3,9 @@
 
 #include "Characters/StarCharacter.h"
 
+#include "Components/LoadoutComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Net/UnrealNetwork.h"
 
 AStarCharacter::AStarCharacter()
 {
@@ -11,6 +13,13 @@ AStarCharacter::AStarCharacter()
 
 	OverheadWidget = CreateDefaultSubobject<UWidgetComponent>("OverheadWidget");
 	OverheadWidget->SetupAttachment(GetRootComponent());
+
+	Loadout = CreateDefaultSubobject<ULoadoutComponent>("Loadout");
+}
+
+const USkeletalMeshSocket* AStarCharacter::GetWeaponSocket()
+{
+	return GetMesh()->GetSocketByName(WeaponSocketName);
 }
 
 void AStarCharacter::BeginPlay()
@@ -29,5 +38,21 @@ void AStarCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+void AStarCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+}
+
+void AStarCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	if (Loadout)
+	{
+		Loadout->Character = this;
+	}
 }
 

@@ -6,6 +6,11 @@
 #include "GameFramework/Character.h"
 #include "StarCharacter.generated.h"
 
+class ULoadoutComponent;
+class IInteractableInterface;
+class AWeapon;
+class UStarAttributeSet;
+class UStarAbilitySystemComponent;
 class UWidgetComponent;
 
 UCLASS()
@@ -17,14 +22,33 @@ public:
 	AStarCharacter();
 
 	virtual void Tick(float DeltaTime) override;
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual void PostInitializeComponents() override;
 
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	UStarAbilitySystemComponent* GetAbilitySystemComponent() const { return AbilitySystemComponent; }
+	UStarAttributeSet* GetAttributeSet() const { return AttributeSet; }
+
+	const USkeletalMeshSocket* GetWeaponSocket();
+	void AttachWeaponToSocket(AWeapon* Weapon);
+
 protected:
 	virtual void BeginPlay() override;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UStarAbilitySystemComponent> AbilitySystemComponent;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UStarAttributeSet> AttributeSet;
+
+	TObjectPtr<ULoadoutComponent> Loadout;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Widget")
 	TObjectPtr<UWidgetComponent> OverheadWidget;
 
-private:	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon")
+	FName WeaponSocketName = FName("RightHandSocket");
+
+private:
 
 };

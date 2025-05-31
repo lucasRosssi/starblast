@@ -6,41 +6,53 @@
 #include "Characters/StarCharacter.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Net/UnrealNetwork.h"
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemComponent.h"
 
 UInteractComponent::UInteractComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 
-	AreaSphere = CreateDefaultSubobject<USphereComponent>("AreaSphere");
-	AreaSphere->SetCollisionResponseToAllChannels(ECR_Ignore);
-	AreaSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
 	InteractWidget = CreateDefaultSubobject<UWidgetComponent>("InteractWidget");
+	InteractWidget->SetIsReplicated(false);
 	InteractWidget->SetVisibility(false);
 }
 
-void UInteractComponent::SetRootComponent(USceneComponent* RootComponent)
+void UInteractComponent::SetCollisionComponent(UPrimitiveComponent* Component)
 {
-	AreaSphere->SetupAttachment(RootComponent);
-	InteractWidget->SetupAttachment(RootComponent);
+	CollisionComponent = Component;
+	InteractWidget->SetupAttachment(Component);
 }
 
 void UInteractComponent::Enable()
 {
+	if (!CollisionComponent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[%s's InteractComponent]: CollisionComponent not defined!"), *GetOwner()->GetName());
+		return;
+	}
+	
 	bEnabled = true;
-	AreaSphere->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
-	AreaSphere->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	AreaSphere->OnComponentBeginOverlap.AddDynamic(this, &UInteractComponent::OnSphereOverlap);
-	AreaSphere->OnComponentEndOverlap.AddDynamic(this, &UInteractComponent::OnSphereEndOverlap);
+	CollisionComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	CollisionComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	CollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &UInteractComponent::OnOverlap);
+	CollisionComponent->OnComponentEndOverlap.AddDynamic(this, &UInteractComponent::OnEndOverlap);
 }
 
 void UInteractComponent::Disable()
 {
+	if (!CollisionComponent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[%s's InteractComponent]: CollisionComponent not defined!"), *GetOwner()->GetName());
+		return;
+	}
+	
 	bEnabled = false;
-	AreaSphere->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
-	AreaSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	AreaSphere->OnComponentBeginOverlap.RemoveDynamic(this, &UInteractComponent::OnSphereOverlap);
-	AreaSphere->OnComponentEndOverlap.RemoveDynamic(this, &UInteractComponent::OnSphereEndOverlap);
+	CollisionComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
+	CollisionComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	CollisionComponent->OnComponentBeginOverlap.RemoveDynamic(this, &UInteractComponent::OnOverlap);
+	CollisionComponent->OnComponentEndOverlap.RemoveDynamic(this, &UInteractComponent::OnEndOverlap);
 }
 
 
@@ -48,7 +60,7 @@ void UInteractComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (GetOwner() && GetOwner()->HasAuthority() && bBeginEnabled)
+	if (bBeginEnabled)
 	{
 		Enable();
 	}
@@ -58,7 +70,7 @@ void UInteractComponent::BeginPlay()
 	}
 }
 
-void UInteractComponent::OnSphereOverlap(
+void UInteractComponent::OnOverlap(
 	UPrimitiveComponent* OverlappedComponent,
 	AActor* OtherActor,
 	UPrimitiveComponent* OtherComp,
@@ -69,13 +81,16 @@ void UInteractComponent::OnSphereOverlap(
 {
 	// TODO: Check if OtherActor implements "Interact" interface
 
-	if (Cast<AStarCharacter>(OtherActor))
+	if (const AStarCharacter* StarCharacter = Cast<AStarCharacter>(OtherActor))
 	{
-		InteractWidget->SetVisibility(true);
+		if (StarCharacter->IsLocallyControlled())
+		{
+			InteractWidget->SetVisibility(true);
+		}
 	}
 }
 
-void UInteractComponent::OnSphereEndOverlap(
+void UInteractComponent::OnEndOverlap(
 	UPrimitiveComponent* OverlappedComponent,
 	AActor* OtherActor,
 	UPrimitiveComponent* OtherComp,
@@ -84,7 +99,30 @@ void UInteractComponent::OnSphereEndOverlap(
 {
 	// TODO: Check if OtherActor implements "Interact" interface
 
-	if (Cast<AStarCharacter>(OtherActor))
+	if (const AStarCharacter* StarCharacter = Cast<AStarCharacter>(OtherActor))
+	{
+		if (StarCharacter->IsLocallyControlled())
+		{
+			InteractWidget->SetVisibility(false);
+		}
+	}
+}
+
+void UInteractComponent::OnInteracted(AStarCharacter* Character)
+{
+	UAbilitySystemComponent* ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Character);
+	FGameplayAbilitySpec InteractAbilitySpec = FGameplayAbilitySpec(InteractAbility, 1);
+	FGameplayEventData Data = FGameplayEventData();
+	Data.Instigator = Character;
+	Data.Target = GetOwner();
+	ASC->GiveAbilityAndActivateOnce(InteractAbilitySpec, &Data);
+	
+	if (bDisableOnInteracted)
+	{
+		Disable();
+	}
+	
+	if (Character->IsLocallyControlled())
 	{
 		InteractWidget->SetVisibility(false);
 	}

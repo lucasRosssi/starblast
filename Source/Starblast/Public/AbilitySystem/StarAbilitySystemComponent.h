@@ -13,5 +13,17 @@ UCLASS()
 class STARBLAST_API UStarAbilitySystemComponent : public UAbilitySystemComponent
 {
 	GENERATED_BODY()
+
+public:
+	void AbilityInputTagPressed(const FGameplayTag& InputTag);
+	void AbilityInputTagHeld(const FGameplayTag& InputTag);
+	void AbilityInputTagReleased(const FGameplayTag& InputTag);
+
+	void ConfirmPressed();
+	void CancelPressed();
+
+protected:
+
+private:
 	
 };

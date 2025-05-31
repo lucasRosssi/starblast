@@ -5,21 +5,36 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "GameFramework/Actor.h"
+#include "Interfaces/InteractableInterface.h"
 #include "Weapon.generated.h"
 
+class AStarCharacter;
+class UStarAbilitySystemComponent;
 class UInteractComponent;
-class USphereComponent;
+class UCapsuleComponent;
 
 UCLASS()
-class STARBLAST_API AWeapon : public AActor
+class STARBLAST_API AWeapon : public AActor, public IInteractableInterface
 {
 	GENERATED_BODY()
 	
 public:	
 	AWeapon();
 
+	void SetWeaponState(const FGameplayTag& InStateTag);
+
 protected:
 	virtual void BeginPlay() override;
+
+	// START Interactable Interface
+	virtual UInteractComponent* GetInteractComponent_Implementation() const override;
+	// END Interactable Interface
+
+	AStarCharacter* GetOwningCharacter() const { return OwningCharacter; }
+	UStarAbilitySystemComponent* GetAbilitySystemComponent();
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interaction")
+	TObjectPtr<UCapsuleComponent> InteractArea;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Weapon Properties")
 	TObjectPtr<USkeletalMeshComponent> WeaponMesh;
@@ -30,4 +45,10 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Weapon Properties")
 	FGameplayTag WeaponStateTag;
 private:
+	UPROPERTY()
+	AStarCharacter* OwningCharacter;
+	
+	UPROPERTY()
+	UStarAbilitySystemComponent* AbilitySystemComponent;
+
 };

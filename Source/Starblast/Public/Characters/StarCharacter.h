@@ -3,9 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbilitySystemInterface.h"
 #include "GameFramework/Character.h"
 #include "StarCharacter.generated.h"
 
+class UInteractComponent;
+class UGameplayAbility;
+class UGameplayEffect;
 class ULoadoutComponent;
 class IInteractableInterface;
 class AWeapon;
@@ -14,7 +18,7 @@ class UStarAbilitySystemComponent;
 class UWidgetComponent;
 
 UCLASS()
-class STARBLAST_API AStarCharacter : public ACharacter
+class STARBLAST_API AStarCharacter : public ACharacter, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
@@ -26,14 +30,28 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual void PostInitializeComponents() override;
 
-	UStarAbilitySystemComponent* GetAbilitySystemComponent() const { return AbilitySystemComponent; }
-	UStarAttributeSet* GetAttributeSet() const { return AttributeSet; }
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
+	UStarAbilitySystemComponent* GetStarASC() const { return AbilitySystemComponent; }
+	UStarAttributeSet* GetAttributeSet() const { return AttributeSet; }
+	ULoadoutComponent* GetLoadoutComponent() const { return Loadout; }
+
+	UInteractComponent* GetInteractComponentInRange() const { return InteractComponentInRange; }
+	void SetInteractComponentInRange(UInteractComponent* InComponent) { InteractComponentInRange = InComponent; }
+
+	UFUNCTION(BlueprintPure, Category="Weapon")
 	const USkeletalMeshSocket* GetWeaponSocket();
+	UFUNCTION(BlueprintCallable)
 	void AttachWeaponToSocket(AWeapon* Weapon);
 
 protected:
 	virtual void BeginPlay() override;
+
+	virtual void InitAbilityActorInfo();
+	virtual void InitializeAbilities();
+	virtual void InitializeAttributesAndEffects();
+
+	void ApplyEffectToSelf(const TSubclassOf<UGameplayEffect>& GameplayEffectClass, float Level) const;
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UStarAbilitySystemComponent> AbilitySystemComponent;
@@ -41,14 +59,23 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UStarAttributeSet> AttributeSet;
 
+	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<ULoadoutComponent> Loadout;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Widget")
 	TObjectPtr<UWidgetComponent> OverheadWidget;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Character Defaults|Weapon")
 	FName WeaponSocketName = FName("RightHandSocket");
 
-private:
+	UPROPERTY(EditDefaultsOnly, Category = "Character Defaults|Ability System")
+	TArray<TSubclassOf<UGameplayAbility>> DefaultAbilities;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Defaults|Ability System")
+	TSubclassOf<UGameplayEffect> DefaultAttributes;
+	UPROPERTY(EditDefaultsOnly, Category="Character Defaults|Ability System")
+	TArray<TSubclassOf<UGameplayEffect>> DefaultEffects;
 
+private:
+	UPROPERTY()
+	UInteractComponent* InteractComponentInRange = nullptr;
 };

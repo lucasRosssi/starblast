@@ -5,14 +5,19 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystem/StarAbilitySystemComponent.h"
+#include "Characters/Hero.h"
+#include "Components/InteractComponent.h"
 #include "Inputs/StarInputComponent.h"
+#include "Starblast/StarblastMacros.h"
 
 void AStarPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
-	UStarInputComponent* StarInputComponent = CastChecked<UStarInputComponent>
+	UStarInputComponent* StarInputComponent = Cast<UStarInputComponent>
 	(InputComponent);
+
+	GUARD(StarInputComponent,, TEXT("Star Input Component was not set!"));
 	
 	StarInputComponent->BindAction(
 		ConfirmAction,
@@ -42,17 +47,17 @@ void AStarPlayerController::SetupInputComponent()
 	);
 }
 
-void AStarPlayerController::AbilityInputTagPressed(const FGameplayTag& InputTag)
+void AStarPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 {
 	GetASC()->AbilityInputTagPressed(InputTag);
 }
 
-void AStarPlayerController::AbilityInputTagReleased(const FGameplayTag& InputTag)
+void AStarPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 {
 	GetASC()->AbilityInputTagReleased(InputTag);
 }
 
-void AStarPlayerController::AbilityInputTagHeld(const FGameplayTag& InputTag)
+void AStarPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 {
 	GetASC()->AbilityInputTagHeld(InputTag);
 }
@@ -69,18 +74,13 @@ void AStarPlayerController::CancelPressed()
 
 void AStarPlayerController::InteractPressed()
 {
-	// if (InteractablesInRange.IsEmpty()) return;
- //  
-	// const UInteractComponent* Interactable = InteractablesInRange[InteractablesInRange.Num() - 1];
-	// if (!IsValid(Interactable))
-	// {
-	// 	RemoveInteractableInRange(Interactable);
-	// 	return;
-	// }
-	//
-	// if (!Interactable->IsEnabled()) return;
-	//
-	// Interactable->BeginInteract(this);
+	GUARD(GetHeroPawn(),, TEXT("Pawn is not of Hero class!"));
+
+	UInteractComponent* InteractComponentInRange = HeroPawn->GetInteractComponentInRange();
+
+	if (!InteractComponentInRange) return;
+
+	InteractComponentInRange->OnInteracted(HeroPawn);
 }
 
 UStarAbilitySystemComponent* AStarPlayerController::GetASC()
@@ -88,10 +88,20 @@ UStarAbilitySystemComponent* AStarPlayerController::GetASC()
 	if (StarASC == nullptr)
 	{
 		auto ASC = UAbilitySystemBlueprintLibrary::
-			GetAbilitySystemComponent(GetPawn<APawn>());
+			GetAbilitySystemComponent(GetPawn());
 		StarASC = Cast<UStarAbilitySystemComponent>(ASC);
 
 	}
 	
 	return StarASC;
+}
+
+AHero* AStarPlayerController::GetHeroPawn()
+{
+	if (HeroPawn == nullptr)
+	{
+		HeroPawn = GetPawn<AHero>();
+	}
+
+	return HeroPawn;
 }

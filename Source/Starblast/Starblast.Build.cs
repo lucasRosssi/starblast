@@ -15,12 +15,12 @@ public class Starblast : ModuleRules
 			"Engine", 
 			"InputCore",
 			"EnhancedInput",
-			"UMG"
+			"UMG", 
+			"GameplayAbilities"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[]
 		{
-			"GameplayAbilities", 
 			"GameplayTags", 
 			"GameplayTasks"
 		});

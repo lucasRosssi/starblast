@@ -18,6 +18,7 @@ public:
 	ULoadoutComponent();
 	friend class AStarCharacter;
 
+	UFUNCTION(BlueprintCallable)
 	void EquipWeapon(AWeapon* InWeapon);
 protected:
 	virtual void BeginPlay() override;

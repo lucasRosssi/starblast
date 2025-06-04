@@ -6,6 +6,9 @@
 #include "AbilitySystemComponent.h"
 #include "StarAbilitySystemComponent.generated.h"
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FEffectAssetTags, const FGameplayTagContainer& /* AssetTags */)
+DECLARE_MULTICAST_DELEGATE(FAbilitiesGiven);
+
 /**
  * 
  */
@@ -15,6 +18,9 @@ class STARBLAST_API UStarAbilitySystemComponent : public UAbilitySystemComponent
 	GENERATED_BODY()
 
 public:
+	void AbilityActorInfoSet();
+	void AddStartupAbilities(const TArray<TSubclassOf<UGameplayAbility>>& InAbilities);
+	
 	void AbilityInputTagPressed(const FGameplayTag& InputTag);
 	void AbilityInputTagHeld(const FGameplayTag& InputTag);
 	void AbilityInputTagReleased(const FGameplayTag& InputTag);
@@ -22,8 +28,18 @@ public:
 	void ConfirmPressed();
 	void CancelPressed();
 
-protected:
+	FAbilitiesGiven AbilitiesGivenDelegate;
+	FEffectAssetTags EffectAssetTags;
 
+	bool bStartupAbilitiesGiven = false;
+
+protected:
+	void EffectApplied(
+		UAbilitySystemComponent* AbilitySystemComponent,
+		const FGameplayEffectSpec& EffectSpec,
+		FActiveGameplayEffectHandle ActiveEffectHandle
+	);
+	
 private:
 	
 };

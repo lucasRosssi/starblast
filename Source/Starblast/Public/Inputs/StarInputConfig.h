@@ -7,13 +7,15 @@
 #include "Engine/DataAsset.h"
 #include "StarInputConfig.generated.h"
 
+class UInputAction;
+
 USTRUCT(BlueprintType)
 struct FStarInputAction
 {
 	GENERATED_BODY()
 
 	UPROPERTY(EditDefaultsOnly)
-	const class UInputAction* InputAction = nullptr;
+	const UInputAction* InputAction = nullptr;
 
 	UPROPERTY(EditDefaultsOnly)
 	FGameplayTag InputTag = FGameplayTag();

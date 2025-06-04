@@ -25,10 +25,12 @@ void FStarTags::InitializeNativeGameplayTags()
   
   UE_DEFINE_GAMEPLAY_TAG_STATIC(InputTag, "Input");
   GameplayTags.InputTag = InputTag;
-  UE_DEFINE_GAMEPLAY_TAG_STATIC(InputTag_Primary, "Input.Primary");
-  GameplayTags.InputTag_Primary = InputTag_Primary;
-  UE_DEFINE_GAMEPLAY_TAG_STATIC(InputTag_Secondary, "Input.Secondary");
-  GameplayTags.InputTag_Secondary = InputTag_Secondary;
+  UE_DEFINE_GAMEPLAY_TAG_STATIC(InputTag_FireWeapon, "Input.FireWeapon");
+  GameplayTags.InputTag_FireWeapon = InputTag_FireWeapon;
+  UE_DEFINE_GAMEPLAY_TAG_STATIC(InputTag_Aim, "Input.Aim");
+  GameplayTags.InputTag_Aim = InputTag_Aim;
+	UE_DEFINE_GAMEPLAY_TAG_STATIC(InputTag_Reload, "Input.Reload");
+	GameplayTags.InputTag_Reload = InputTag_Reload;
   UE_DEFINE_GAMEPLAY_TAG_STATIC(InputTag_Loadout, "Input.Loadout");
   GameplayTags.InputTag_Loadout = InputTag_Loadout;
 	UE_DEFINE_GAMEPLAY_TAG_STATIC(InputTag_Loadout_1, "Input.Loadout.1");

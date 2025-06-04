@@ -9,6 +9,7 @@
 #include "Net/UnrealNetwork.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "Starblast/StarblastMacros.h"
 
 UInteractComponent::UInteractComponent()
 {
@@ -81,8 +82,10 @@ void UInteractComponent::OnOverlap(
 {
 	// TODO: Check if OtherActor implements "Interact" interface
 
-	if (const AStarCharacter* StarCharacter = Cast<AStarCharacter>(OtherActor))
+	if (AStarCharacter* StarCharacter = Cast<AStarCharacter>(OtherActor))
 	{
+		StarCharacter->SetInteractComponentInRange(this);
+	
 		if (StarCharacter->IsLocallyControlled())
 		{
 			InteractWidget->SetVisibility(true);
@@ -99,8 +102,10 @@ void UInteractComponent::OnEndOverlap(
 {
 	// TODO: Check if OtherActor implements "Interact" interface
 
-	if (const AStarCharacter* StarCharacter = Cast<AStarCharacter>(OtherActor))
+	if (AStarCharacter* StarCharacter = Cast<AStarCharacter>(OtherActor))
 	{
+		StarCharacter->SetInteractComponentInRange(nullptr);
+		
 		if (StarCharacter->IsLocallyControlled())
 		{
 			InteractWidget->SetVisibility(false);
@@ -110,6 +115,8 @@ void UInteractComponent::OnEndOverlap(
 
 void UInteractComponent::OnInteracted(AStarCharacter* Character)
 {
+	GUARD(IsValid(InteractAbility),, TEXT("Interact Ability not set!"));
+	
 	UAbilitySystemComponent* ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Character);
 	FGameplayAbilitySpec InteractAbilitySpec = FGameplayAbilitySpec(InteractAbility, 1);
 	FGameplayEventData Data = FGameplayEventData();

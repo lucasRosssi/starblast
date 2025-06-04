@@ -24,6 +24,8 @@ public:
 	void Enable();
 	void Disable();
 
+	void OnInteracted(AStarCharacter* Character);
+
 protected:
 	virtual void BeginPlay() override;
 	
@@ -43,9 +45,7 @@ protected:
 		UPrimitiveComponent* OtherComp,
 		int32 OtherBodyIndex
 	);
-
-	void OnInteracted(AStarCharacter* Character);
-
+	
 	UPROPERTY(BlueprintReadOnly, Category="Interaction")
 	TObjectPtr<UPrimitiveComponent> CollisionComponent;
 

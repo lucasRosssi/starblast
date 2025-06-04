@@ -7,6 +7,8 @@
 #include "GameFramework/PlayerController.h"
 #include "StarPlayerController.generated.h"
 
+class AHero;
+class UInteractComponent;
 class UStarAbilitySystemComponent;
 class UStarInputConfig;
 class UInputMappingContext;
@@ -43,9 +45,9 @@ protected:
 	TObjectPtr<UInputAction> InteractAction;
 
 private:
-	void AbilityInputTagPressed(const FGameplayTag& InputTag);
-	void AbilityInputTagReleased(const FGameplayTag& InputTag);
-	void AbilityInputTagHeld(const FGameplayTag& InputTag);
+	void AbilityInputTagPressed(FGameplayTag InputTag);
+	void AbilityInputTagReleased(FGameplayTag InputTag);
+	void AbilityInputTagHeld(FGameplayTag InputTag);
 
 	void ConfirmPressed();
 	void CancelPressed();
@@ -54,6 +56,11 @@ private:
 	
 	UStarAbilitySystemComponent* GetASC();
 
+	AHero* GetHeroPawn();
+
 	UPROPERTY()
 	TObjectPtr<UStarAbilitySystemComponent> StarASC;
+
+	UPROPERTY()
+	TObjectPtr<AHero> HeroPawn;
 };

@@ -21,8 +21,9 @@ public:
 	/* INPUTS */
 
 	FGameplayTag InputTag;
-	FGameplayTag InputTag_Primary;
-	FGameplayTag InputTag_Secondary;
+	FGameplayTag InputTag_FireWeapon;
+	FGameplayTag InputTag_Aim;
+	FGameplayTag InputTag_Reload;
 	FGameplayTag InputTag_Loadout;
 	FGameplayTag InputTag_Loadout_1;
 	FGameplayTag InputTag_Loadout_2;

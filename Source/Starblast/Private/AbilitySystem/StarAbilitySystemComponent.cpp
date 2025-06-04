@@ -3,7 +3,31 @@
 
 #include "AbilitySystem/StarAbilitySystemComponent.h"
 
-#include "AbilitySystem/Abilities/BaseAbility.h"
+#include "AbilitySystem/Abilities/ActiveAbility.h"
+
+void UStarAbilitySystemComponent::AbilityActorInfoSet()
+{
+	OnGameplayEffectAppliedDelegateToSelf.AddUObject(
+		this,
+		&UStarAbilitySystemComponent::EffectApplied
+	);
+}
+
+void UStarAbilitySystemComponent::AddStartupAbilities(const TArray<TSubclassOf<UGameplayAbility>>& InAbilities)
+{
+	for (const auto AbilityClass : InAbilities)
+	{
+		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AbilityClass, 1);
+		if (const auto* ActiveAbility = Cast<UActiveAbility>(AbilitySpec.Ability))
+		{
+			AbilitySpec.GetDynamicSpecSourceTags().AddTag(ActiveAbility->StartupInputTag);
+		}
+		GiveAbility(AbilitySpec);
+	}
+
+	bStartupAbilitiesGiven = true;
+	AbilitiesGivenDelegate.Broadcast();
+}
 
 void UStarAbilitySystemComponent::AbilityInputTagPressed(const FGameplayTag& InputTag)
 {
@@ -23,7 +47,7 @@ void UStarAbilitySystemComponent::AbilityInputTagPressed(const FGameplayTag& Inp
 				AbilitySpec.GetPrimaryInstance()->GetCurrentActivationInfo().GetActivationPredictionKey()
 			);
 		}
-		else if (const UBaseAbility* ActiveAbility = Cast<UBaseAbility>(AbilitySpec.Ability))
+		else if (const UActiveAbility* ActiveAbility = Cast<UActiveAbility>(AbilitySpec.Ability))
 		{
 			if (!ActiveAbility->bCanHoldInput) TryActivateAbility(AbilitySpec.Handle);
 		}
@@ -39,7 +63,7 @@ void UStarAbilitySystemComponent::AbilityInputTagHeld(const FGameplayTag& InputT
 	for (auto& AbilitySpec : GetActivatableAbilities())
 	{
 		if (!AbilitySpec.GetDynamicSpecSourceTags().HasTagExact(InputTag)) continue;
-		if (const UBaseAbility* ActiveAbility = Cast<UBaseAbility>(AbilitySpec.Ability))
+		if (const UActiveAbility* ActiveAbility = Cast<UActiveAbility>(AbilitySpec.Ability))
 		{
 			if (!ActiveAbility->bCanHoldInput) break;
 		}
@@ -77,7 +101,7 @@ void UStarAbilitySystemComponent::ConfirmPressed()
 	for (auto& AbilitySpec : GetActivatableAbilities())
 	{
 		if (!AbilitySpec.IsActive()) continue;
-		if (!Cast<UBaseAbility>(AbilitySpec.Ability)) continue;
+		if (!Cast<UActiveAbility>(AbilitySpec.Ability)) continue;
 
 		InputConfirm();
 		break;
@@ -89,9 +113,21 @@ void UStarAbilitySystemComponent::CancelPressed()
 	for (auto& AbilitySpec : GetActivatableAbilities())
 	{
 		if (!AbilitySpec.IsActive()) continue;
-		if (!Cast<UBaseAbility>(AbilitySpec.Ability)) continue;
+		if (!Cast<UActiveAbility>(AbilitySpec.Ability)) continue;
 
 		InputCancel();
 		break;
 	}
+}
+
+void UStarAbilitySystemComponent::EffectApplied(
+	UAbilitySystemComponent* AbilitySystemComponent,
+	const FGameplayEffectSpec& EffectSpec,
+	FActiveGameplayEffectHandle ActiveEffectHandle
+)
+{
+	FGameplayTagContainer TagContainer;
+	EffectSpec.GetAllAssetTags(TagContainer);
+
+	EffectAssetTags.Broadcast(TagContainer);
 }

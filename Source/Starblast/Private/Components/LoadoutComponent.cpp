@@ -6,7 +6,7 @@
 #include "StarTags.h"
 #include "Actors/Weapons/Weapon.h"
 #include "Characters/StarCharacter.h"
-#include "Engine/SkeletalMeshSocket.h"
+#include "Starblast/StarblastMacros.h"
 
 ULoadoutComponent::ULoadoutComponent()
 {
@@ -16,18 +16,15 @@ ULoadoutComponent::ULoadoutComponent()
 
 void ULoadoutComponent::EquipWeapon(AWeapon* InWeapon)
 {
-	if (!Character.IsValid() || InWeapon == nullptr) return;
+	GUARD(Character.IsValid(),, TEXT("Character not set!"));
+	GUARD(IsValid(InWeapon),, TEXT("Invalid weapon!"));
 
 	const FStarTags& Tags = FStarTags::Get();
 	
 	EquippedWeapon = InWeapon;
 	EquippedWeapon->SetWeaponState(Tags.Weapon_State_Equipped);
 
-	const USkeletalMeshSocket* WeaponSocket = Character->GetWeaponSocket();
-	if (WeaponSocket)
-	{
-		WeaponSocket->AttachActor(EquippedWeapon, Character->GetMesh());
-	}
+	Character->AttachWeaponToSocket(EquippedWeapon);
 	EquippedWeapon->SetOwner(Character.Get());
 }
 

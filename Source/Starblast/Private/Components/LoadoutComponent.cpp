@@ -6,12 +6,21 @@
 #include "StarTags.h"
 #include "Actors/Weapons/Weapon.h"
 #include "Characters/StarCharacter.h"
+#include "Net/UnrealNetwork.h"
 #include "Starblast/StarblastMacros.h"
 
 ULoadoutComponent::ULoadoutComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 
+	SetIsReplicated(true);
+}
+
+void ULoadoutComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ULoadoutComponent, EquippedWeapon);
 }
 
 void ULoadoutComponent::EquipWeapon(AWeapon* InWeapon)

@@ -17,8 +17,11 @@ class STARBLAST_API ULoadoutComponent : public UActorComponent
 
 public:	
 	ULoadoutComponent();
+	friend class AStarCharacter;
 	friend class AHero;
 	friend class AEnemy;
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	UFUNCTION(BlueprintCallable)
 	void EquipWeapon(AWeapon* InWeapon);
@@ -29,7 +32,7 @@ private:
 	UPROPERTY()
 	TObjectPtr<AStarCharacter> OwnerCharacter;
 
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	AWeapon* EquippedWeapon = nullptr;
 		
 };

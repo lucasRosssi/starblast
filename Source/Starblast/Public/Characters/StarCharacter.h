@@ -43,6 +43,7 @@ public:
 	const USkeletalMeshSocket* GetWeaponSocket();
 	UFUNCTION(BlueprintCallable)
 	void AttachWeaponToSocket(AWeapon* Weapon);
+	bool IsWeaponEquipped();
 
 protected:
 	virtual void BeginPlay() override;

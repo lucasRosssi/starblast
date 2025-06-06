@@ -5,6 +5,7 @@
 
 #include "AbilitySystem/StarAbilitySystemComponent.h"
 #include "Actors/Weapons/Weapon.h"
+#include "Components/LoadoutComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "Net/UnrealNetwork.h"
@@ -30,6 +31,11 @@ void AStarCharacter::AttachWeaponToSocket(AWeapon* Weapon)
 	{
 		WeaponSocket->AttachActor(Weapon, GetMesh());
 	}
+}
+
+bool AStarCharacter::IsWeaponEquipped()
+{
+	return GetLoadout() && Loadout->EquippedWeapon;
 }
 
 void AStarCharacter::BeginPlay()

@@ -53,6 +53,9 @@ private:
 	void CancelPressed();
 
 	void InteractPressed();
+
+	UFUNCTION(Server, Reliable)
+	void ServerInteract(UInteractComponent* InteractComponent);
 	
 	UStarAbilitySystemComponent* GetASC();
 

@@ -76,11 +76,18 @@ void AStarPlayerController::InteractPressed()
 {
 	GUARD(GetHeroPawn(),, TEXT("Pawn is not of Hero class!"));
 
-	UInteractComponent* InteractComponentInRange = HeroPawn->GetInteractComponentInRange();
+	UInteractComponent* InteractComponent = HeroPawn->GetInteractComponentInRange();
 
-	if (!InteractComponentInRange) return;
+	if (!InteractComponent) return;
 
-	InteractComponentInRange->OnInteracted(HeroPawn);
+	ServerInteract(InteractComponent);
+}
+
+void AStarPlayerController::ServerInteract_Implementation(UInteractComponent* InteractComponent)
+{
+	GUARD(GetHeroPawn(),, TEXT("Pawn is not of Hero class!"));
+	
+	InteractComponent->Interact(HeroPawn);
 }
 
 UStarAbilitySystemComponent* AStarPlayerController::GetASC()

@@ -28,6 +28,19 @@ void AHero::OnRep_PlayerState()
 	InitAbilityActorInfo();
 }
 
+ULoadoutComponent* AHero::GetLoadout()
+{
+	if (Loadout == nullptr)
+	{
+		if (const AStarPlayerState* PS = GetPlayerState<AStarPlayerState>())
+		{
+			Loadout = PS->GetLoadout();
+		}
+	}
+
+	return Loadout;
+}
+
 void AHero::InitAbilityActorInfo()
 {
 	AStarPlayerState* StarPS = GetPlayerState<AStarPlayerState>();

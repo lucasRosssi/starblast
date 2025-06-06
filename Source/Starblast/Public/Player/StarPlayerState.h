@@ -28,6 +28,8 @@ public:
 	ULoadoutComponent* GetLoadout() const { return Loadout; }
 	
 protected:
+	virtual void BeginPlay() override;
+	
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UStarAbilitySystemComponent> AbilitySystemComponent;
 
@@ -37,4 +39,6 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<ULoadoutComponent> Loadout;
 private:
+	UFUNCTION()
+	void OnPawnChanged(APlayerState* Player, APawn* NewPawn, APawn* OldPawn);
 };

@@ -17,6 +17,7 @@ class STARBLAST_API ULoadoutComponent : public UActorComponent
 public:	
 	ULoadoutComponent();
 	friend class AStarCharacter;
+	friend class AStarPlayerState;
 
 	UFUNCTION(BlueprintCallable)
 	void EquipWeapon(AWeapon* InWeapon);
@@ -24,7 +25,8 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	TWeakObjectPtr<AStarCharacter> Character;
+	UPROPERTY()
+	TObjectPtr<AStarCharacter> Character;
 
 	UPROPERTY()
 	AWeapon* EquippedWeapon = nullptr;

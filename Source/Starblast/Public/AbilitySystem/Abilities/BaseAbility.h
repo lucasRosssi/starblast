@@ -18,6 +18,7 @@ class STARBLAST_API UBaseAbility : public UGameplayAbility
 	GENERATED_BODY()
 
 public:
+	UBaseAbility();
 
 protected:
 	UFUNCTION(BlueprintPure, Category="Avatar", meta=(HidePin="Target", DefaultToSelf="Target"))

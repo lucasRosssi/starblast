@@ -8,6 +8,8 @@
 #include "Characters/StarCharacter.h"
 #include "Components/InteractComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Net/UnrealNetwork.h"
+#include "Starblast/StarblastMacros.h"
 
 AWeapon::AWeapon()
 {
@@ -29,15 +31,20 @@ AWeapon::AWeapon()
 	InteractComponent->SetCollisionComponent(InteractArea);
 }
 
+void AWeapon::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AWeapon, WeaponStateTag);
+}
+
 void AWeapon::SetWeaponState(const FGameplayTag& InStateTag)
 {
-	if (!InStateTag.MatchesTag(FStarTags::Get().Weapon_State))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Invalid Weapon State Tag: %s"), *InStateTag.ToString());
-		return;
-	}
+	GUARD(InStateTag.MatchesTag(FStarTags::Get().Weapon_State),, TEXT("Invalid Weapon State Tag: %s"), *InStateTag.ToString())
 
 	WeaponStateTag = InStateTag;
+
+	OnRep_WeaponStateTag();
 }
 
 void AWeapon::BeginPlay()
@@ -60,4 +67,14 @@ UStarAbilitySystemComponent* AWeapon::GetAbilitySystemComponent()
 	}
 
 	return AbilitySystemComponent;
+}
+
+void AWeapon::OnRep_WeaponStateTag()
+{
+	const FStarTags& StarTags = FStarTags::Get();
+	
+	if (WeaponStateTag.MatchesTagExact(StarTags.Weapon_State_Equipped))
+	{
+		InteractComponent->Disable();
+	}
 }

@@ -153,6 +153,8 @@ void FStarTags::InitializeNativeGameplayTags()
 	GameplayTags.Weapon_State_Default = Weapon_State_Default;
 	UE_DEFINE_GAMEPLAY_TAG_STATIC(Weapon_State_Equipped, "Weapon.State.Equipped");
 	GameplayTags.Weapon_State_Equipped = Weapon_State_Equipped;
+	UE_DEFINE_GAMEPLAY_TAG_STATIC(Weapon_State_Inventory, "Weapon.State.Inventory");
+	GameplayTags.Weapon_State_Inventory = Weapon_State_Inventory;
 	UE_DEFINE_GAMEPLAY_TAG_STATIC(Weapon_State_Dropped, "Weapon.State.Dropped");
 	GameplayTags.Weapon_State_Dropped = Weapon_State_Dropped;
 	

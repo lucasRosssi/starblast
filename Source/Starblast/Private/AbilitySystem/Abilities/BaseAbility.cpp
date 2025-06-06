@@ -6,6 +6,11 @@
 #include "Characters/Enemy.h"
 #include "Characters/Hero.h"
 
+UBaseAbility::UBaseAbility()
+{
+	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
+}
+
 AHero* UBaseAbility::GetHero()
 {
 	if (AvatarHero == nullptr)

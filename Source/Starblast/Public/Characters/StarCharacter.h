@@ -28,13 +28,13 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-	virtual void PostInitializeComponents() override;
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 	UStarAbilitySystemComponent* GetStarASC() const { return AbilitySystemComponent; }
 	UStarAttributeSet* GetAttributeSet() const { return AttributeSet; }
-	ULoadoutComponent* GetLoadoutComponent() const { return Loadout; }
+	UFUNCTION(BlueprintPure)
+	virtual ULoadoutComponent* GetLoadout();
 
 	UInteractComponent* GetInteractComponentInRange() const { return InteractComponentInRange; }
 	void SetInteractComponentInRange(UInteractComponent* InComponent) { InteractComponentInRange = InComponent; }

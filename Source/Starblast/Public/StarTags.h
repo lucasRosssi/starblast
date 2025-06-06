@@ -83,6 +83,7 @@ public:
 	FGameplayTag Weapon_State;
 	FGameplayTag Weapon_State_Default;
 	FGameplayTag Weapon_State_Equipped;
+	FGameplayTag Weapon_State_Inventory;
 	FGameplayTag Weapon_State_Dropped;
 
 

@@ -20,6 +20,13 @@ UInteractComponent::UInteractComponent()
 	InteractWidget->SetVisibility(false);
 }
 
+void UInteractComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	
+}
+
 void UInteractComponent::SetCollisionComponent(UPrimitiveComponent* Component)
 {
 	CollisionComponent = Component;
@@ -28,11 +35,7 @@ void UInteractComponent::SetCollisionComponent(UPrimitiveComponent* Component)
 
 void UInteractComponent::Enable()
 {
-	if (!CollisionComponent)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[%s's InteractComponent]: CollisionComponent not defined!"), *GetOwner()->GetName());
-		return;
-	}
+	GUARD(CollisionComponent,, TEXT("CollisionComponent not defined!"), *GetOwner()->GetName());
 	
 	bEnabled = true;
 	CollisionComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
@@ -43,17 +46,43 @@ void UInteractComponent::Enable()
 
 void UInteractComponent::Disable()
 {
-	if (!CollisionComponent)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[%s's InteractComponent]: CollisionComponent not defined!"), *GetOwner()->GetName());
-		return;
-	}
+	GUARD(CollisionComponent,, TEXT("CollisionComponent not defined!"), *GetOwner()->GetName());
 	
 	bEnabled = false;
 	CollisionComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
 	CollisionComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	CollisionComponent->OnComponentBeginOverlap.RemoveDynamic(this, &UInteractComponent::OnOverlap);
 	CollisionComponent->OnComponentEndOverlap.RemoveDynamic(this, &UInteractComponent::OnEndOverlap);
+	InteractWidget->SetVisibility(false);
+}
+
+void UInteractComponent::Interact(AStarCharacter* Character)
+{
+	GUARD(IsValid(InteractAbility),, TEXT("Interact Ability not set!"));
+	
+	UAbilitySystemComponent* ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Character);
+	FGameplayAbilitySpec InteractAbilitySpec = FGameplayAbilitySpec(InteractAbility, 1);
+	FGameplayEventData Data = FGameplayEventData();
+	Data.Instigator = Character;
+	Data.Target = GetOwner();
+	ASC->GiveAbilityAndActivateOnce(InteractAbilitySpec, &Data);
+	
+	OnInteracted(Character);
+}
+
+void UInteractComponent::OnInteracted(const AStarCharacter* Character)
+{
+	if (bDisableOnInteracted)
+	{
+		Disable();
+	}
+	else
+	{
+		if (Character->IsLocallyControlled())
+		{
+			InteractWidget->SetVisibility(false);
+		}
+	}
 }
 
 
@@ -110,27 +139,5 @@ void UInteractComponent::OnEndOverlap(
 		{
 			InteractWidget->SetVisibility(false);
 		}
-	}
-}
-
-void UInteractComponent::OnInteracted(AStarCharacter* Character)
-{
-	GUARD(IsValid(InteractAbility),, TEXT("Interact Ability not set!"));
-	
-	UAbilitySystemComponent* ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Character);
-	FGameplayAbilitySpec InteractAbilitySpec = FGameplayAbilitySpec(InteractAbility, 1);
-	FGameplayEventData Data = FGameplayEventData();
-	Data.Instigator = Character;
-	Data.Target = GetOwner();
-	ASC->GiveAbilityAndActivateOnce(InteractAbilitySpec, &Data);
-	
-	if (bDisableOnInteracted)
-	{
-		Disable();
-	}
-	
-	if (Character->IsLocallyControlled())
-	{
-		InteractWidget->SetVisibility(false);
 	}
 }

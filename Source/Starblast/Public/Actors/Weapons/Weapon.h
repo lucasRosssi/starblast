@@ -21,6 +21,8 @@ class STARBLAST_API AWeapon : public AActor, public IInteractableInterface
 public:	
 	AWeapon();
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 	void SetWeaponState(const FGameplayTag& InStateTag);
 
 protected:
@@ -42,7 +44,12 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interaction")
 	TObjectPtr<UInteractComponent> InteractComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Weapon Properties")
+	UPROPERTY(
+		ReplicatedUsing=OnRep_WeaponStateTag,
+		VisibleAnywhere,
+		BlueprintReadOnly,
+		Category="Weapon Properties"
+	)
 	FGameplayTag WeaponStateTag;
 private:
 	UPROPERTY()
@@ -50,5 +57,8 @@ private:
 	
 	UPROPERTY()
 	UStarAbilitySystemComponent* AbilitySystemComponent;
+
+	UFUNCTION()
+	void OnRep_WeaponStateTag();
 
 };

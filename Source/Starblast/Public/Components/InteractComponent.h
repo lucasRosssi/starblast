@@ -18,14 +18,17 @@ class STARBLAST_API UInteractComponent : public UActorComponent
 
 public:	
 	UInteractComponent();
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
 	void SetCollisionComponent(UPrimitiveComponent* Component);
 	
 	void Enable();
 	void Disable();
-
-	void OnInteracted(AStarCharacter* Character);
-
+	
+	void Interact(AStarCharacter* Character);
+	void OnInteracted(const AStarCharacter* Character);
+	
 protected:
 	virtual void BeginPlay() override;
 	

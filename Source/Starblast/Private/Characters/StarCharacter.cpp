@@ -36,7 +36,8 @@ void AStarCharacter::AttachWeaponToSocket(AWeapon* Weapon)
 void AStarCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	GetLoadout()->Character = this;
 }
 
 void AStarCharacter::InitAbilityActorInfo()
@@ -98,18 +99,13 @@ void AStarCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 
 }
 
-void AStarCharacter::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
-
-	if (Loadout)
-	{
-		Loadout->Character = this;
-	}
-}
-
 UAbilitySystemComponent* AStarCharacter::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;
+}
+
+ULoadoutComponent* AStarCharacter::GetLoadout()
+{
+	return Loadout;
 }
 

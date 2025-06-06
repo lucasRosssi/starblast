@@ -4,6 +4,7 @@
 #include "Characters/Hero.h"
 
 #include "AbilitySystem/StarAbilitySystemComponent.h"
+#include "Components/LoadoutComponent.h"
 #include "Player/StarPlayerState.h"
 #include "Starblast/StarblastMacros.h"
 
@@ -50,4 +51,5 @@ void AHero::InitAbilityActorInfo()
 	AbilitySystemComponent->InitAbilityActorInfo(StarPS, this);
 	AttributeSet = StarPS->GetAttributeSet();
 	Loadout = StarPS->GetLoadout();
+	Loadout->OwnerCharacter = this;
 }

@@ -7,6 +7,7 @@
 #include "LoadoutComponent.generated.h"
 
 
+class AStarCharacter;
 class AWeapon;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -16,8 +17,8 @@ class STARBLAST_API ULoadoutComponent : public UActorComponent
 
 public:	
 	ULoadoutComponent();
-	friend class AStarCharacter;
-	friend class AStarPlayerState;
+	friend class AHero;
+	friend class AEnemy;
 
 	UFUNCTION(BlueprintCallable)
 	void EquipWeapon(AWeapon* InWeapon);
@@ -26,7 +27,7 @@ protected:
 
 private:
 	UPROPERTY()
-	TObjectPtr<AStarCharacter> Character;
+	TObjectPtr<AStarCharacter> OwnerCharacter;
 
 	UPROPERTY()
 	AWeapon* EquippedWeapon = nullptr;

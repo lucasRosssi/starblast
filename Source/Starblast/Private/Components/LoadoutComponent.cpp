@@ -16,7 +16,7 @@ ULoadoutComponent::ULoadoutComponent()
 
 void ULoadoutComponent::EquipWeapon(AWeapon* InWeapon)
 {
-	GUARD(IsValid(Character),, TEXT("Character not set!"));
+	GUARD(IsValid(OwnerCharacter),, TEXT("Character not set!"));
 	GUARD(IsValid(InWeapon),, TEXT("Invalid weapon!"));
 
 	const FStarTags& StarTags = FStarTags::Get();
@@ -24,8 +24,8 @@ void ULoadoutComponent::EquipWeapon(AWeapon* InWeapon)
 	EquippedWeapon = InWeapon;
 	EquippedWeapon->SetWeaponState(StarTags.Weapon_State_Equipped);
 
-	Character->AttachWeaponToSocket(EquippedWeapon);
-	EquippedWeapon->SetOwner(Character);
+	OwnerCharacter->AttachWeaponToSocket(EquippedWeapon);
+	EquippedWeapon->SetOwner(OwnerCharacter);
 }
 
 void ULoadoutComponent::BeginPlay()

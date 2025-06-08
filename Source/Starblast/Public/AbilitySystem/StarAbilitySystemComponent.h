@@ -8,6 +8,7 @@
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FEffectAssetTags, const FGameplayTagContainer& /* AssetTags */)
 DECLARE_MULTICAST_DELEGATE(FAbilitiesGiven);
+DECLARE_DELEGATE_OneParam(FCombatStateChanged, const FGameplayTag&);
 
 /**
  * 
@@ -30,6 +31,7 @@ public:
 
 	FAbilitiesGiven AbilitiesGivenDelegate;
 	FEffectAssetTags EffectAssetTags;
+	FCombatStateChanged CombatStateChangedDelegate;
 
 	bool bStartupAbilitiesGiven = false;
 

@@ -57,6 +57,8 @@ void AStarCharacter::InitializeAbilities()
 
 void AStarCharacter::InitializeAttributesAndEffects()
 {
+	if (!HasAuthority()) return;
+	
 	if (DefaultAttributes) ApplyEffectToSelf(DefaultAttributes, 1.f);
 
 	if (!DefaultEffects.IsEmpty())

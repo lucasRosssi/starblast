@@ -157,6 +157,23 @@ void FStarTags::InitializeNativeGameplayTags()
 	GameplayTags.Weapon_State_Inventory = Weapon_State_Inventory;
 	UE_DEFINE_GAMEPLAY_TAG_STATIC(Weapon_State_Dropped, "Weapon.State.Dropped");
 	GameplayTags.Weapon_State_Dropped = Weapon_State_Dropped;
+
+	/*
+	 * Combat Tags
+	 */
+	
+	UE_DEFINE_GAMEPLAY_TAG_STATIC(Combat, "Combat");
+	GameplayTags.Combat = Combat;
+	UE_DEFINE_GAMEPLAY_TAG_STATIC(Combat_State, "Combat.State");
+	GameplayTags.Combat_State = Combat_State;
+	UE_DEFINE_GAMEPLAY_TAG_STATIC(Combat_State_Default, "Combat.State.Default");
+	GameplayTags.Combat_State_Default = Combat_State_Default;
+	UE_DEFINE_GAMEPLAY_TAG_STATIC(Combat_State_Aiming, "Combat.State.Aiming");
+	GameplayTags.Combat_State_Aiming = Combat_State_Aiming;
+	UE_DEFINE_GAMEPLAY_TAG_STATIC(Combat_State_Sprinting, "Combat.State.Sprinting");
+	GameplayTags.Combat_State_Sprinting = Combat_State_Sprinting;
+	UE_DEFINE_GAMEPLAY_TAG_STATIC(Combat_State_Reloading, "Combat.State.Reloading");
+	GameplayTags.Combat_State_Reloading = Combat_State_Reloading;
 	
   /*
    * Map of Tags to their children
@@ -170,8 +187,17 @@ void FStarTags::InitializeNativeGameplayTags()
       GameplayTags.InputTag_Loadout_4
     }
   );
+	const TArray CombatStateTags(
+		{
+		GameplayTags.Combat_State_Default,
+		GameplayTags.Combat_State_Aiming,
+		GameplayTags.Combat_State_Sprinting,
+		GameplayTags.Combat_State_Reloading,
+		}
+	);
 
-  GameplayTags.ParentsToChildren.Add(GameplayTags.InputTag_Loadout, LoadoutInputTags);
+	GameplayTags.ParentsToChildren.Add(GameplayTags.InputTag_Loadout, LoadoutInputTags);
+	GameplayTags.ParentsToChildren.Add(GameplayTags.Combat_State, CombatStateTags);
   
   GameplayTags.bIsValid = true;
 }

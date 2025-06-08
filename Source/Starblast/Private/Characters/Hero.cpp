@@ -19,6 +19,8 @@ void AHero::PossessedBy(AController* NewController)
 
 	// Init ability actor info for the server
 	InitAbilityActorInfo();
+	InitializeAbilities();
+	InitializeAttributesAndEffects();
 }
 
 void AHero::OnRep_PlayerState()
@@ -49,6 +51,7 @@ void AHero::InitAbilityActorInfo()
 
 	AbilitySystemComponent = StarPS->GetStarASC();
 	AbilitySystemComponent->InitAbilityActorInfo(StarPS, this);
+	ASCRegisteredDelegate.Broadcast(AbilitySystemComponent);
 	AttributeSet = StarPS->GetAttributeSet();
 	Loadout = StarPS->GetLoadout();
 	Loadout->OwnerCharacter = this;

@@ -3,9 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "Animation/AnimInstance.h"
 #include "StarAnimInstance.generated.h"
 
+class UStarAbilitySystemComponent;
 class AStarCharacter;
 /**
  * 
@@ -21,11 +23,21 @@ public:
 	
 protected:
 	UPROPERTY(BlueprintReadOnly)
-	AStarCharacter* StarCharacter = nullptr;
+	TObjectPtr<AStarCharacter> StarCharacter = nullptr;
+
+	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<UStarAbilitySystemComponent> AbilitySystemComponent = nullptr;
 	
 	UPROPERTY(BlueprintReadOnly)
 	bool bWeaponEquipped = false;
+
+	UPROPERTY(BlueprintReadOnly)
+	FGameplayTagContainer CombatStateContainer = FGameplayTagContainer();
 	
 private:
+	void ListenForCombatStateChange();
+	void RegisterCombatStateTagEvents();
 	
+	void OnCombatStateChanged(const FGameplayTag CallbackTag, int32 NewCount);
+	void OnASCRegistered(UStarAbilitySystemComponent* InAbilitySystemComponent);
 };

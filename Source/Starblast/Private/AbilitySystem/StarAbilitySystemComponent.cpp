@@ -11,6 +11,7 @@ void UStarAbilitySystemComponent::AbilityActorInfoSet()
 		this,
 		&UStarAbilitySystemComponent::EffectApplied
 	);
+	
 }
 
 void UStarAbilitySystemComponent::AddStartupAbilities(const TArray<TSubclassOf<UGameplayAbility>>& InAbilities)

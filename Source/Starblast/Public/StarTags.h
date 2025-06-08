@@ -86,7 +86,13 @@ public:
 	FGameplayTag Weapon_State_Inventory;
 	FGameplayTag Weapon_State_Dropped;
 
-
+	FGameplayTag Combat;
+	FGameplayTag Combat_State;
+	FGameplayTag Combat_State_Default;
+	FGameplayTag Combat_State_Aiming;
+	FGameplayTag Combat_State_Sprinting;
+	FGameplayTag Combat_State_Reloading;
+	
 	TMap<FGameplayTag, TArray<FGameplayTag>> ParentsToChildren;
 
 private:

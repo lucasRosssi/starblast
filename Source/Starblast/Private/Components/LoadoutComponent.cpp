@@ -13,7 +13,6 @@ ULoadoutComponent::ULoadoutComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 
-	SetIsReplicated(true);
 }
 
 void ULoadoutComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

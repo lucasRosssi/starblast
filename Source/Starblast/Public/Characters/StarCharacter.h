@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
+#include "GameplayTagContainer.h"
 #include "GameFramework/Character.h"
 #include "StarCharacter.generated.h"
 
@@ -16,6 +17,8 @@ class AWeapon;
 class UStarAttributeSet;
 class UStarAbilitySystemComponent;
 class UWidgetComponent;
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnASCRegistered, UStarAbilitySystemComponent*);
 
 UCLASS()
 class STARBLAST_API AStarCharacter : public ACharacter, public IAbilitySystemInterface
@@ -44,6 +47,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void AttachWeaponToSocket(AWeapon* Weapon);
 	bool IsWeaponEquipped();
+
+	FOnASCRegistered ASCRegisteredDelegate;
 
 protected:
 	virtual void BeginPlay() override;
@@ -79,4 +84,6 @@ protected:
 private:
 	UPROPERTY()
 	UInteractComponent* InteractComponentInRange = nullptr;
+
+	FGameplayTag CombatStateTag = FGameplayTag();
 };

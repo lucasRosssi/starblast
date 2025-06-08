@@ -32,11 +32,7 @@ protected:
 	
 	UPROPERTY(EditAnywhere, Category="Input")
 	TObjectPtr<UInputMappingContext> MainContext;
-
-	UPROPERTY(EditAnywhere, Category="Input")
-	TObjectPtr<UInputAction> MoveAction;
-	UPROPERTY(EditAnywhere, Category="Input")
-	TObjectPtr<UInputAction> TargetingActorMoveAction;
+	
 	UPROPERTY(EditAnywhere, Category="Input")
 	TObjectPtr<UInputAction> ConfirmAction;
 	UPROPERTY(EditAnywhere, Category="Input")

@@ -10,6 +10,7 @@
 #include "Engine/SkeletalMeshSocket.h"
 #include "Net/UnrealNetwork.h"
 #include "Starblast/StarblastMacros.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 AStarCharacter::AStarCharacter()
 {
@@ -21,7 +22,7 @@ AStarCharacter::AStarCharacter()
 
 const USkeletalMeshSocket* AStarCharacter::GetWeaponSocket()
 {
-	return GetMesh()->GetSocketByName(WeaponSocketName);
+	return GetStarCharacterMesh()->GetSocketByName(WeaponSocketName);
 }
 
 void AStarCharacter::AttachWeaponToSocket(AWeapon* Weapon)
@@ -29,7 +30,7 @@ void AStarCharacter::AttachWeaponToSocket(AWeapon* Weapon)
 	const USkeletalMeshSocket* WeaponSocket = GetWeaponSocket();
 	if (WeaponSocket)
 	{
-		WeaponSocket->AttachActor(Weapon, GetMesh());
+		WeaponSocket->AttachActor(Weapon, GetStarCharacterMesh());
 	}
 }
 
@@ -68,6 +69,11 @@ void AStarCharacter::InitializeAttributesAndEffects()
 			ApplyEffectToSelf(Effect, 1.f);
 		}
 	}
+}
+
+USkeletalMeshComponent* AStarCharacter::GetStarCharacterMesh_Implementation()
+{
+	return GetMesh();
 }
 
 void AStarCharacter::ApplyEffectToSelf(const TSubclassOf<UGameplayEffect>& GameplayEffectClass, float Level) const

@@ -5,9 +5,9 @@
 
 #include "AbilitySystem/StarAbilitySystemComponent.h"
 #include "AbilitySystem/StarAttributeSet.h"
+#include "Characters/Hero.h"
 #include "Characters/StarCharacter.h"
 #include "Components/LoadoutComponent.h"
-#include "Starblast/StarblastMacros.h"
 
 AStarPlayerState::AStarPlayerState()
 {
@@ -23,4 +23,14 @@ AStarPlayerState::AStarPlayerState()
 UAbilitySystemComponent* AStarPlayerState::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;
+}
+
+AHero* AStarPlayerState::GetHero()
+{
+	if (Hero == nullptr)
+	{
+		Hero = Cast<AHero>(GetPawn());
+	}
+
+	return Hero;
 }

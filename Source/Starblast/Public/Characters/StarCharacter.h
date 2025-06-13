@@ -47,7 +47,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void AttachWeaponToSocket(AWeapon* Weapon);
 	bool IsWeaponEquipped();
-
+	
 	FOnASCRegistered ASCRegisteredDelegate;
 
 protected:
@@ -56,6 +56,9 @@ protected:
 	virtual void InitAbilityActorInfo();
 	virtual void InitializeAbilities();
 	virtual void InitializeAttributesAndEffects();
+
+	UFUNCTION(BlueprintNativeEvent)
+  USkeletalMeshComponent* GetStarCharacterMesh();
 
 	void ApplyEffectToSelf(const TSubclassOf<UGameplayEffect>& GameplayEffectClass, float Level) const;
 
@@ -81,9 +84,13 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="Character Defaults|Ability System")
 	TArray<TSubclassOf<UGameplayEffect>> DefaultEffects;
 
+	UPROPERTY(BlueprintReadOnly, Category="Movement")
+	float MovementSpeed = 1.f;
+
 private:
 	UPROPERTY()
 	UInteractComponent* InteractComponentInRange = nullptr;
 
 	FGameplayTag CombatStateTag = FGameplayTag();
+
 };

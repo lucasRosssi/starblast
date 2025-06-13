@@ -5,8 +5,10 @@
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
 #include "GameFramework/PlayerState.h"
+#include "Interfaces/AttributeSetInterface.h"
 #include "StarPlayerState.generated.h"
 
+class AHero;
 class ULoadoutComponent;
 class UStarAttributeSet;
 class UStarAbilitySystemComponent;
@@ -14,7 +16,7 @@ class UStarAbilitySystemComponent;
  * 
  */
 UCLASS()
-class STARBLAST_API AStarPlayerState : public APlayerState, public IAbilitySystemInterface
+class STARBLAST_API AStarPlayerState : public APlayerState, public IAbilitySystemInterface, public IAttributeSetInterface
 {
 	GENERATED_BODY()
 
@@ -26,7 +28,7 @@ public:
 	UStarAbilitySystemComponent* GetStarASC() const { return AbilitySystemComponent; }
 	UStarAttributeSet* GetAttributeSet() const { return AttributeSet; }
 	ULoadoutComponent* GetLoadout() const { return Loadout; }
-	
+
 protected:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UStarAbilitySystemComponent> AbilitySystemComponent;
@@ -37,4 +39,7 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<ULoadoutComponent> Loadout;
 private:
+	AHero* GetHero();
+	UPROPERTY()
+	AHero* Hero = nullptr;
 };
